@@ -25,6 +25,7 @@ def mine_dfg_metrics(log):
     # df_perf = pd.DataFrame([ [ key[0], key[1], value ] for key, value in dfg_performance.items() ], 
     #                     columns=[ 'src', 'tgt', 'time_mean' ])
 
+    # combine both metrics for each edge
     return df_freq.merge(df_perf, how='inner', on=['src', 'tgt'], validate=None)
 
 
@@ -157,6 +158,9 @@ def plot_metrics_dfg(logs, log_labels=None, metric1=None, metric2=None, normaliz
     plot_metric_dfg(logs, log_labels, metric1, normalize, time_unit, per_edge, edges, subplot_of=axes[0])
     plot_metric_dfg(logs, log_labels, metric2, normalize, time_unit, per_edge, edges, subplot_of=axes[1])
 
+# normalize: True/False
+# metric: 'freq', 'time_mean', 'time_median', 'time_min', 'time_max', 'time_stdev'
+# time_unit: min, hr, day, month, year
 def plot_metric_dfg(logs, log_labels=None, metric='freq', normalize=None, time_unit=None, per_edge=False, edges=None, subplot_of=None):
     _, merge = compare_logs_dfg(logs)
 
