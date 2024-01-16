@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 from pm4py.algo.discovery.dfg.adapters.pandas import df_statistics
 from pm4py.objects.log.util import dataframe_utils
 
-
 def mine_dfg_metrics(log):
     log = dataframe_utils.convert_timestamp_columns_in_df(log, timest_columns=['time:timestamp'])
     dfg_frequency, dfg_performance = df_statistics.get_dfg_graph(log, measure="both",
@@ -33,26 +32,26 @@ class GroupTypes(Enum):
     BY_ELEMENT = 'by_element'
     BY_LOG = 'by_log'
 
-def compare_logs_dfg(logs):
+
+def logs_to_dfgs(logs):
     dfgs = []
     for index, log in enumerate(logs):
         dfg = mine_dfg_metrics(log)
         dfg.columns = [ f"{col}_{index}" if (col != 'src' and col != 'tgt') else col for col in dfg.columns ]
         dfgs.append(dfg)
+        
+    return dfgs
 
+def merge_dfgs(dfgs):
     # outer join over all DFG dataframes on edges
     # if DFG has edge, will have value copied for metric columns
     # if DFG does not have edge, will have NaN for metric columns
     # ('suffixes' somehow not working propertly for multiple merges)
-    merge = reduce(lambda dfg_x, dfg_y: dfg_x.merge(dfg_y, on=[ 'src', 'tgt' ], how='outer', suffixes=("", "")), dfgs)
+    return reduce(lambda dfg_x, dfg_y: dfg_x.merge(dfg_y, on=[ 'src', 'tgt' ], how='outer', suffixes=("", "")), dfgs)
+
+def compare_dfgs(dfgs):
+    merge = merge_dfgs(dfgs)
     # print(merge)
-
-    return [ dfgs, merge ]
-
-
-def compare_nodes_edges_dfg(logs):
-    # get DFGs for each log & their outer join
-    dfgs, merge = compare_logs_dfg(logs)
 
     node_diff = []
     edge_diff = []
@@ -86,14 +85,12 @@ def compare_nodes_edges_dfg(logs):
 
     return [ node_diff, edge_diff ]
 
-
-def print_nodes_edges_cmp(logs, cmp_results, log_labels=None, group_type=GroupTypes.BY_ELEMENT):
+def print_cmp_results(cmp_results, log_labels, group_type=GroupTypes.BY_ELEMENT):
     node_diff, edge_diff = cmp_results
 
     label_fn = lambda nr: log_labels[nr] if log_labels is not None else str(nr)
 
     if group_type == GroupTypes.BY_ELEMENT:
-
         list_fn = lambda s: ("log(s) " if log_labels is None else "") + ', '.join(map(label_fn, s.unique()))
         for v, g in node_diff.groupby(['node']):
             print(f". event '{v[0]}' from {list_fn(g['dfg_i'])} not found in {list_fn(g['dfg_j'])}")
@@ -105,11 +102,11 @@ def print_nodes_edges_cmp(logs, cmp_results, log_labels=None, group_type=GroupTy
 
     elif group_type == GroupTypes.BY_LOG:
         # for each DFG j
-        for i in range(len(logs)):
+        for i in range(len(log_labels)):
             print(f"> log {label_fn(i)}")
 
             # for each DFG j
-            for j in range(len(logs)):
+            for j in range(len(log_labels)):
                 if i == j:
                     continue
 
@@ -161,8 +158,8 @@ def plot_metrics_dfg(logs, log_labels=None, metric1=None, metric2=None, normaliz
 # normalize: True/False
 # metric: 'freq', 'time_mean', 'time_median', 'time_min', 'time_max', 'time_stdev'
 # time_unit: min, hr, day, month, year
-def plot_metric_dfg(logs, log_labels=None, metric='freq', normalize=None, time_unit=None, per_edge=False, edges=None, subplot_of=None):
-    _, merge = compare_logs_dfg(logs)
+def plot_metric_dfg(logs, log_labels, metric='freq', normalize=None, time_unit=None, per_edge=False, edges=None, subplot_of=None):
+    merge = merge_dfgs(logs_to_dfgs(logs))
 
     # filter non-metric columns
     merge = merge[['src', 'tgt', *[ f'{metric}_{i}' for i in range(len(logs)) ]]]
