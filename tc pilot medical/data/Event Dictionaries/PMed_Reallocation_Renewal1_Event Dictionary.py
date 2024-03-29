@@ -1,0 +1,11 @@
+{('Completed - Renewed by CAME', 'Completed - Assessment Complete'): 15,
+ ('Completed - Renewed by CAME', 'In Progress - Letter - Defer'): 1,
+ ('Completed - Renewed by CAME', 'On Hold (Pending) - AMRB'): 1,
+ ('In Progress - Letter - Defer', 'Completed - Assessment Complete'): 1,
+ ('Medical Exam Date', 'Completed - Renewed by CAME'): 2108,
+ ('Medical Exam Date', 'Received Date'): 882,
+ ('New - Received', 'Completed - Assessment Complete'): 1,
+ ('On Hold (Pending) - AMRB', 'Completed - Assessment Complete'): 1,
+ ('Received Date', 'Completed - Renewed by CAME'): 881,
+ ('Received Date', 'Medical Exam Date'): 2108,
+ ('Received Date', 'New - Received'): 1}
