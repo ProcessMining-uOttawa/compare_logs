@@ -32,15 +32,26 @@ class GroupTypes(Enum):
     BY_ELEMENT = 'by_element'
     BY_LOG = 'by_log'
 
+to_lower = False
+def __nodestr__(str):
+    return str if not to_lower else str.lower()
+
+def dicts_to_dfgs(dicts):
+    return [ dict_to_dfg(dict, index) for index, dict in enumerate(dicts) ]
+
+def dict_to_dfg(dict, index):
+    dfg = pd.DataFrame([ [ __nodestr__(key[0]), __nodestr__(key[1]), value ] for key, value in dict.items() ], columns=[ 'src', 'tgt', 'freq' ])
+    dfg.rename(columns={'freq': f'freq_{index}'}, inplace=True)
+    
+    return dfg
 
 def logs_to_dfgs(logs):
-    dfgs = []
-    for index, log in enumerate(logs):
-        dfg = mine_dfg_metrics(log)
-        dfg.columns = [ f"{col}_{index}" if (col != 'src' and col != 'tgt') else col for col in dfg.columns ]
-        dfgs.append(dfg)
-        
-    return dfgs
+    return [ log_to_dfg(log, index) for index, log in enumerate(logs) ]
+
+def log_to_dfg(log, index):
+    dfg = mine_dfg_metrics(log)
+    dfg.columns = [ f"{col}_{index}" if (col != 'src' and col != 'tgt') else col for col in dfg.columns ]
+    return dfg
 
 def merge_dfgs(dfgs):
     # outer join over all DFG dataframes on edges
@@ -103,14 +114,14 @@ def print_cmp_results(cmp_results, log_labels, group_type=GroupTypes.BY_ELEMENT)
     elif group_type == GroupTypes.BY_LOG:
         # for each DFG j
         for i in range(len(log_labels)):
-            print(f"> log {label_fn(i)}")
+            print(f"> {label_fn(i)}")
 
             # for each DFG j
             for j in range(len(log_labels)):
                 if i == j:
                     continue
 
-                print(f"- compared to log {label_fn(j)}:")
+                print(f"- compared to {label_fn(j)}:")
 
                 # nodes found in i but not j
                 extra_nodes = node_diff.loc[(node_diff['dfg_i']==i)&(node_diff['dfg_j']==j),'node']

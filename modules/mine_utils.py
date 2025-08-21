@@ -24,7 +24,7 @@ from pm4py.visualization.process_tree import visualizer as pt_visualizer
 from pm4py.objects.conversion.process_tree import converter as pt_converter
 
 # custom code
-from abstract_events import aggregate_events, generalize_events
+from .abstract_events import aggregate_events, generalize_events
 
 import numpy as np
 import pandas as pd
@@ -68,13 +68,14 @@ def mine_dfg(log, noise_threshold=0, edge_freq=1):
     gviz = dfg_visualizer.apply(dfg, log=log, 
 #                                variant=dfg_visualizer.Variants.PERFORMANCE, 
 #                                parameters={ 'pm4py:param:start_timestamp_key': 'time:timestamp',
+#                                             'pm4py:param:timestamp_key': 'time:timestamp'}
 #                                             'pm4py:param:timestamp_key': 'end_timestamp' }
                                 variant=dfg_visualizer.Variants.FREQUENCY 
     )
     dfg_visualizer.view(gviz)
     
     return dfg
-    
+
 def mine_pnet_alpha(log):
     net, initial_marking, final_marking = alpha_miner.apply(log)
     gviz = pn_visualizer.apply(net, initial_marking, final_marking)

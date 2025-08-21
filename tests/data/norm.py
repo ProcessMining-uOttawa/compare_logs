@@ -1,0 +1,11 @@
+{('Admission NC', 'CRP'): 1, 
+ ('CRP', 'ER Triage'): 1, 
+ ('CRP', 'Leucocytes'): 1, 
+ ('ER Registration', 'Leucocytes'): 1, 
+ ('ER Sepsis Triage', 'IV Liquid'): 1, 
+ ('ER Sepsis Triage', 'Release B'): 1,
+ ('ER Triage', 'ER Sepsis Triage'): 1, 
+ ('IV Antibiotics', 'Admission NC'): 1, 
+ ('IV Liquid', 'IV Antibiotics'): 1, 
+ ('Leucocytes', 'CRP'): 1, 
+ ('Leucocytes', 'Release A'): 1}
