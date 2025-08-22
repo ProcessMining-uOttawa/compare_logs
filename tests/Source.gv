@@ -1,0 +1,176 @@
+digraph {
+
+	graph [bgcolor=white rankdir=LR]
+
+	6062909776 [label="" fillcolor=green fontsize=12 shape=circle style=filled]
+
+	6063631440 [label="ER Registration" fontsize=12 shape=box]
+
+	6062947920 [label="+" fontsize=12 shape=diamond]
+
+	6062934992 [label="ER Triage" fontsize=12 shape=box]
+
+	6063515984 [label="X" fontsize=12 shape=diamond]
+
+	6063519632 [label="X" fontsize=12 shape=diamond]
+
+	6063539792 [label="X" fontsize=12 shape=diamond]
+
+	6062941712 [label="ER Sepsis Triage" fontsize=12 shape=box]
+
+	6063516304 [label="X" fontsize=12 shape=diamond]
+
+	6063520464 [label="X" fontsize=12 shape=diamond]
+
+	6063538576 [label="X" fontsize=12 shape=diamond]
+
+	6063518416 [label="X" fontsize=12 shape=diamond]
+
+	6063540624 [label="X" fontsize=12 shape=diamond]
+
+	6063542288 [label="X" fontsize=12 shape=diamond]
+
+	6062941584 [label="Leucocytes" fontsize=12 shape=box]
+
+	6062944656 [label="LacticAcid" fontsize=12 shape=box]
+
+	6062943824 [label="CRP" fontsize=12 shape=box]
+
+	6063506512 [label="+" fontsize=12 shape=diamond]
+
+	6062946064 [label="+" fontsize=12 shape=diamond]
+
+	6062945232 [label="IV Liquid" fontsize=12 shape=box]
+
+	6062943120 [label="IV Antibiotics" fontsize=12 shape=box]
+
+	6063510544 [label="X" fontsize=12 shape=diamond]
+
+	6063521360 [label="X" fontsize=12 shape=diamond]
+
+	6063541520 [label="X" fontsize=12 shape=diamond]
+
+	6063517520 [label="X" fontsize=12 shape=diamond]
+
+	6063510032 [label="Release E" fontsize=12 shape=box]
+
+	6063510416 [label="Release D" fontsize=12 shape=box]
+
+	6063509328 [label="Release C" fontsize=12 shape=box color=lightpink style=filled]
+
+	6063506000 [label="Release B" fontsize=12 shape=box]
+
+	6063468304 [label="+" fontsize=12 shape=diamond]
+
+	6063513936 [label="X" fontsize=12 shape=diamond]
+
+	6063507536 [label="X" fontsize=12 shape=diamond]
+
+	6063509136 [label="Admission NC" fontsize=12 shape=box]
+
+	6063513232 [label="Admission IC" fontsize=12 shape=box]
+
+	6063507664 [label="X" fontsize=12 shape=diamond]
+
+	6063515472 [label="" fillcolor=orange fontsize=12 shape=circle style=filled]
+
+	6062909776 -> 6063631440
+
+	6063631440 -> 6062947920
+
+	6062947920 -> 6062934992
+
+	6062947920 -> 6063515984
+
+	6062947920 -> 6063519632
+
+	6062947920 -> 6063539792
+
+	6062934992 -> 6062941712
+
+	6063515984 -> 6063516304
+
+	6063515984 -> 6063518416
+
+	6063519632 -> 6063520464
+
+	6063519632 -> 6063538576
+
+	6063539792 -> 6063540624
+
+	6063539792 -> 6063542288
+
+	6063516304 -> 6062943824
+
+	6063520464 -> 6062941584
+
+	6063538576 -> 6063506512
+
+	6063518416 -> 6063506512
+
+	6062941712 -> 6062946064
+
+	6063540624 -> 6062944656
+
+	6063542288 -> 6063506512
+
+	6062944656 -> 6063541520
+
+	6062941584 -> 6063521360
+
+	6062943824 -> 6063517520
+
+	6062946064 -> 6062945232
+
+	6062946064 -> 6062943120
+
+	6063506512 -> 6063510544
+
+	6063517520 -> 6063518416
+
+	6063521360 -> 6063520464
+
+	6063521360 -> 6063538576
+
+	6063541520 -> 6063542288
+
+	6063541520 -> 6063540624
+
+	6063517520 -> 6063516304
+
+	6062943120 -> 6063468304
+
+	6062945232 -> 6063468304
+
+	6063510544 -> 6063506000
+
+	6063510544 -> 6063509328
+
+	6063510544 -> 6063510416
+
+	6063510544 -> 6063510032
+
+	6063510416 -> 6063507536
+
+	6063510032 -> 6063507536
+
+	6063468304 -> 6063513936
+
+	6063506000 -> 6063507536
+
+	6063509328 -> 6063507536
+
+	6063513936 -> 6063509136
+
+	6063513936 -> 6063513232
+
+	6063507536 -> 6063515472
+
+	6063513232 -> 6063507664
+
+	6063509136 -> 6063507664
+
+	6063507664 -> 6063506512
+
+	overlap=false
+}

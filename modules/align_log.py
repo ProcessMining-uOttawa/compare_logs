@@ -9,20 +9,21 @@ from pm4py.algo.conformance.alignments.petri_net.variants.state_equation_a_star 
 from pm4py.objects import log as log_lib
 from pm4py.objects.conversion.bpmn import converter as bpmn_converter
 
-def align_trace(trace, net, im, fm, model_cost_function, sync_cost_function):
+def align_trace(trace, net, im, fm, model_cost_function, sync_cost_function, filter_invis=False):
     trace_costs = list(map(lambda e: 1000, trace))
     params = dict()
     params[util.constants.PARAMETER_CONSTANT_ACTIVITY_KEY] = log_lib.util.xes.DEFAULT_NAME_KEY
     params[Parameters.PARAM_MODEL_COST_FUNCTION] = model_cost_function
     params[Parameters.PARAM_TRACE_COST_FUNCTION] = trace_costs
     params[Parameters.PARAM_SYNC_COST_FUNCTION] = sync_cost_function
-    return ali.petri_net.algorithm.apply_trace(trace, net, im, fm, parameters=params,
+    alignment = ali.petri_net.algorithm.apply_trace(trace, net, im, fm, parameters=params,
                                    variant=ali.petri_net.algorithm.VERSION_STATE_EQUATION_A_STAR)
+    if filter_invis:
+        alignment['alignment'] = [ (trace_step, model_step) for trace_step, model_step in alignment['alignment'] if not (trace_step=='>>' and model_step is None) ]
+    
+    return alignment
 
-
-def align_bpmn_log(bpmn, log, filter_invis=False):
-    net, marking, fmarking = bpmn_converter.apply(bpmn)
-
+def __cost_functions(net):
     model_cost_function = {}
     sync_cost_function = {}
     for t in net.transitions:
@@ -31,15 +32,20 @@ def align_bpmn_log(bpmn, log, filter_invis=False):
             sync_cost_function[t] = 0
         else:
             model_cost_function[t] = 0 # updated (invis transits should cost 0)
+    
+    return model_cost_function, sync_cost_function
 
-    alignments = []
-    for trace in log:
-        alignment = align_trace(trace, net, marking, fmarking, model_cost_function, sync_cost_function)
-        if filter_invis:
-            alignment['alignment'] = [ (trace_step, model_step) for trace_step, model_step in alignment['alignment'] if not (trace_step=='>>' and model_step is None) ]
-        alignments.append(alignment)
+def align_bpmn_log(bpmn, log, filter_invis=False):
+    net, marking, fmarking = bpmn_converter.apply(bpmn)
+    model_cost_function, sync_cost_function = __cost_functions(net)
 
-    return alignments
+    return [ align_trace(trace, net, marking, fmarking, model_cost_function, sync_cost_function, filter_invis) for trace in log ]
+
+def align_bpmn_trace(bpmn, trace, filter_invis=False):
+    net, marking, fmarking = bpmn_converter.apply(bpmn)
+    model_cost_function, sync_cost_function = __cost_functions(net)
+    
+    return align_trace(trace, net, marking, fmarking, model_cost_function, sync_cost_function, filter_invis)
 
 
 # copied from
@@ -56,9 +62,9 @@ def pretty_print_alignments(alignments):
     """
     if isinstance(alignments, list):
         for alignment in alignments:
-            __print_single_alignment(alignment["alignment"])
+            return __print_single_alignment(alignment["alignment"])
     else:
-        __print_single_alignment(alignments["alignment"])
+        return __print_single_alignment(alignments["alignment"])
 
 
 def __print_single_alignment(step_list):
@@ -76,7 +82,8 @@ def __print_single_alignment(step_list):
     trace_label = "trace:"
     model_label = "model:"
     
-    print(trace_label, end="")
+    ret = trace_label
+    # print(trace_label, end="")
     for i in range(len(trace_steps)):
         if len(str(trace_steps[i])) - 2 < max_label_length:
             step_length = len(str(trace_steps[i])) - 2
@@ -86,12 +93,15 @@ def __print_single_alignment(step_list):
                     trace_steps[i] = trace_steps[i] + " "
                 else:
                     trace_steps[i] = " " + trace_steps[i]
-        print(trace_steps[i], end='|')
+        ret += trace_steps[i] + "|" 
+        # print(trace_steps[i], end='|')
     label_len = max(len(trace_label),len(model_label)) + 1
     length_divider = len(trace_steps) * (max_label_length + 3) - label_len
-    print('\n' + "".join([ " " for _ in range(label_len)]) + "".join([ "-" for _ in range(length_divider)]))
+    ret += '\n' + "".join([ " " for _ in range(label_len)]) + "".join([ "-" for _ in range(length_divider)]) + "\n"
+    # print('\n' + "".join([ " " for _ in range(label_len)]) + "".join([ "-" for _ in range(length_divider)]))
     
-    print(model_label, end="")
+    ret += model_label
+    # print(model_label, end="")
     for i in range(len(model_steps)):
         if len(model_steps[i]) - 2 < max_label_length:
             step_length = len(model_steps[i]) - 2
@@ -102,5 +112,9 @@ def __print_single_alignment(step_list):
                 else:
                     model_steps[i] = " " + model_steps[i]
 
-        print(model_steps[i], end='|')
-    print('\n\n')
+        ret += model_steps[i] + "|"
+        # print(model_steps[i], end='|')
+    ret += "\n\n"
+    # print('\n\n')
+    
+    return ret
